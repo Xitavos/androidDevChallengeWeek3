@@ -108,7 +108,8 @@ fun ContentColumn(
             modifier = Modifier
                 .paddingFromBaseline(top = 24.dp, bottom = 40.dp),
             text = "Beautiful home garden solutions",
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.onBackground
         )
         ThemedButton(
             text = "Create account",

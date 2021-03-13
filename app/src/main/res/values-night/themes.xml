@@ -21,6 +21,7 @@
         <item name="colorOnSecondary">@color/gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/gray</item>
         <item name="colorSurface">@color/white_150</item>

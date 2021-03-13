@@ -50,7 +50,7 @@ import com.example.androiddevchallenge.ui.theme.MyTheme
 @Composable
 fun LoginScreen(navController: NavController) {
     Scaffold {
-        LoginScreenContent { navController.navigate("") }
+        LoginScreenContent { navController.navigate("home") }
     }
 }
 
