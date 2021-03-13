@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -30,16 +31,12 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 @Composable
@@ -47,12 +44,14 @@ fun WelcomeScreen(navController: NavController) {
     Scaffold(
         backgroundColor = MaterialTheme.colors.primary
     ) {
-        WelcomeScreenContent()
+        WelcomeScreenContent(
+            onLogInClicked = { navController.navigate("login") }
+        )
     }
 }
 
 @Composable
-fun WelcomeScreenContent() {
+fun WelcomeScreenContent(onLogInClicked: () -> Unit) {
     Box {
         Image(
             painter = painterResource(
@@ -60,7 +59,7 @@ fun WelcomeScreenContent() {
             ),
             contentDescription = null
         )
-        ConstraintLayoutContent()
+        ConstraintLayoutContent(onLogInClicked)
     }
 }
 
@@ -71,7 +70,7 @@ fun WelcomeScreenPreview() {
         Scaffold(
             backgroundColor = MaterialTheme.colors.primary
         ) {
-            WelcomeScreenContent()
+            WelcomeScreenContent {}
         }
     }
 }
@@ -83,13 +82,16 @@ fun WelcomeScreenPreviewDarkMode() {
         Scaffold(
             backgroundColor = MaterialTheme.colors.primary
         ) {
-            WelcomeScreenContent()
+            WelcomeScreenContent {}
         }
     }
 }
 
 @Composable
-fun ContentColumn(modifier: Modifier = Modifier) {
+fun ContentColumn(
+    modifier: Modifier = Modifier,
+    onLogInClicked: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -104,32 +106,19 @@ fun ContentColumn(modifier: Modifier = Modifier) {
         )
         Text(
             modifier = Modifier
-                .firstBaselineToTop(24.dp)
-                .lastBaselineToBottom(40.dp),
+                .paddingFromBaseline(top = 24.dp, bottom = 40.dp),
             text = "Beautiful home garden solutions",
             style = MaterialTheme.typography.subtitle1
         )
-        Button(
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth(),
-            onClick = { /*TODO*/ },
-            shape = MaterialTheme.shapes.medium,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.secondary
-            )
-        ) {
-            Text(
-                text = "Create account",
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.onSecondary
-            )
-        }
+        ThemedButton(
+            text = "Create account",
+            onClick = { /*TODO*/ }
+        )
         TextButton(
             modifier = Modifier
                 .height(48.dp)
                 .padding(top = 8.dp),
-            onClick = { /*TODO*/ }
+            onClick = onLogInClicked
         ) {
             Text(
                 text = "Log in",
@@ -141,7 +130,7 @@ fun ContentColumn(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ConstraintLayoutContent() {
+fun ConstraintLayoutContent(onLogInClicked: () -> Unit) {
     ConstraintLayout {
         val (image, column) = createRefs()
 
@@ -159,41 +148,28 @@ fun ConstraintLayoutContent() {
             modifier = Modifier
                 .constrainAs(column) {
                     top.linkTo(image.bottom, margin = 48.dp)
-                }
+                },
+            onLogInClicked = onLogInClicked
         )
     }
 }
 
-fun Modifier.firstBaselineToTop(
-    firstBaselineToTop: Dp
-) = Modifier.layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints)
-
-    // Check the composable has a first baseline
-    check(placeable[FirstBaseline] != AlignmentLine.Unspecified)
-    val firstBaseline = placeable[FirstBaseline]
-
-    // Height of the composable with padding - first baseline
-    val placeableY = firstBaselineToTop.roundToPx() - firstBaseline
-    val height = placeable.height + placeableY
-    layout(placeable.width, height) {
-        // Where the composable gets placed
-        placeable.placeRelative(0, placeableY)
-    }
-}
-
-fun Modifier.lastBaselineToBottom(
-    lastBaselineToBottom: Dp
-) = Modifier.layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints)
-
-    check(placeable[LastBaseline] != AlignmentLine.Unspecified)
-    val lastBaseline = placeable[LastBaseline]
-
-    val placeableY = placeable.height - lastBaseline
-    val height = placeable.height + lastBaselineToBottom.roundToPx()
-    layout(placeable.width, height) {
-        // Where the composable gets placed
-        placeable.placeRelative(0, placeableY)
+@Composable
+fun ThemedButton(text: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .height(48.dp)
+            .fillMaxWidth(),
+        onClick = onClick,
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.secondary
+        )
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.button,
+            color = MaterialTheme.colors.onSecondary
+        )
     }
 }

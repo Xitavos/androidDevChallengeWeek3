@@ -46,6 +46,7 @@ fun MyApp() {
 
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") { WelcomeScreen(navController) }
+        composable("login") { LoginScreen(navController) }
     }
 }
 
